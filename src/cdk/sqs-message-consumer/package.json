@@ -1,0 +1,35 @@
+{
+  "name": "sqs-message-consumer",
+  "version": "0.1.0",
+  "bin": {
+    "sqs-message-consumer": "bin/sqs-message-consumer.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "cdk": "cdk",
+    "prettier": "prettier --config .prettierrc '**/*.ts' --write"
+  },
+  "devDependencies": {
+    "@aws-cdk/assert": "1.105.0",
+    "@types/aws-lambda": "^8.10.77",
+    "@types/node": "10.17.27",
+    "@typescript-eslint/eslint-plugin": "^4.27.0",
+    "@typescript-eslint/parser": "^4.27.0",
+    "aws-cdk": "1.105.0",
+    "jest": "^26.4.2",
+    "prettier": "^2.3.1",
+    "ts-jest": "^26.2.0",
+    "ts-node": "^9.0.0",
+    "typescript": "~3.9.7"
+  },
+  "dependencies": {
+    "@aws-cdk/aws-dynamodb": "1.105.0",
+    "@aws-cdk/aws-lambda-event-sources": "1.105.0",
+    "@aws-cdk/aws-lambda-nodejs": "1.105.0",
+    "@aws-cdk/aws-logs": "1.105.0",
+    "@aws-cdk/aws-sqs": "1.105.0",
+    "@aws-cdk/core": "1.105.0",
+    "source-map-support": "^0.5.16"
+  }
+}

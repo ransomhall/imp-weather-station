@@ -2,9 +2,8 @@ import * as cdk from '@aws-cdk/core';
 import * as sqs from '@aws-cdk/aws-sqs';
 import * as lambda from '@aws-cdk/aws-lambda-nodejs';
 import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
-import * as dynamodb from '@aws-cdk/aws-dynamodb';
 import * as logs from '@aws-cdk/aws-logs';
-
+import * as s3 from '@aws-cdk/aws-s3';
 export interface SqsMessageConsumerProps extends cdk.StackProps {
   env: {
     account: string;
@@ -12,7 +11,6 @@ export interface SqsMessageConsumerProps extends cdk.StackProps {
   };
   appName: string; // stack name and prefix for all resources
 }
-
 export class SqsMessageConsumerStack extends cdk.Stack {
   constructor(scope: cdk.Construct, props: SqsMessageConsumerProps) {
     super(scope, props.appName, props);
@@ -36,23 +34,24 @@ export class SqsMessageConsumerStack extends cdk.Stack {
       value: queue.queueUrl
     });
 
-    //DynamoDB Table
-    const table = new dynamodb.Table(this, 'DynamoTable', {
-      tableName: `${appName}-table`,
-      partitionKey: { name: 'id', type: dynamodb.AttributeType.NUMBER },
-      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      removalPolicy: cdk.RemovalPolicy.DESTROY
+    //S3 bucket
+    const bucket = new s3.Bucket(this, 'Bucket', {
+      encryption: s3.BucketEncryption.KMS,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      autoDeleteObjects: true,
+      bucketName: `${appName}-bucket-${props.env.region}`,
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL
     });
 
-    new cdk.CfnOutput(this, 'TableArn', {
-      value: table.tableArn
+    new cdk.CfnOutput(this, 'BucketArn', {
+      value: bucket.bucketArn
     });
 
     // Lambda
     const consumer = new lambda.NodejsFunction(this, 'MessageConsumer', {
       functionName: `${appName}-lambda`,
       description:
-        'Receives a SQS message and saves WeatherImp data to a dynamodb table.',
+        'Receives a SQS message and saves WeatherImp data to a S3 bucket.',
       entry: 'lambda/index.ts',
       handler: 'handler',
       logRetention: logs.RetentionDays.THREE_MONTHS,
@@ -60,7 +59,7 @@ export class SqsMessageConsumerStack extends cdk.Stack {
         maxRetries: 3
       },
       environment: {
-        TABLE_NAME: table.tableName
+        BUCKET_NAME: bucket.bucketName
       }
     });
 
@@ -76,7 +75,7 @@ export class SqsMessageConsumerStack extends cdk.Stack {
       value: consumer.functionArn
     });
 
-    // grant the lambda role permissions to our table
-    table.grantReadWriteData(consumer);
+    // grant the lambda role permissions to the bucket
+    bucket.grantWrite(consumer);
   }
 }

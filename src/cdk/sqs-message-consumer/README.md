@@ -1,8 +1,8 @@
 ### sqs-message-comsumer
 
-* Creates an SQS Queue, a Lambda trigger, and a DynamoDB table.
+* Creates an SQS Queue, a Lambda trigger, and an S3 bucket DynamoDB table.
 * The SQS message body is a Wunderground API request containing weather data from the WeatherImp station.
-* The lambda parses the data into json and saves the request URL and json to the dynamo table.
+* The lambda parses the data into json and saves the request URL and json to S3.
 
 
 ## Useful commands

@@ -5,7 +5,7 @@ This repository contains various chunks of code related to the data processing f
 ### CDK Stacks
 #### sqs-message-consumer
 
-The main chunk of work is a [CDK Stack](src/cdk/sqs-message-consumer) that wires up a SQS Queue, Lambda, and DynamoDB table to store the raw data emitted by the weather station. The Electric Imp [Agent code](src/imp/agent.nut) sends SQS messages with the raw data to AWS.
+The main chunk of work is a [CDK Stack](src/cdk/sqs-message-consumer) that wires up a SQS Queue, Lambda, and S3 bucket to store the raw data emitted by the weather station. The [ElectricImp](https://www.electricimp.com/platform/how-it-works/) sends SQS messages with the raw data to AWS.
 #### slack-notifier
 
 This [stack](src/cdk/sqs-message-consumer/lib/slack-notifier/slack-notifier-stack.ts) creates a SNS topic with a lambda trigger that sends the body of the message to Slack. See the [readme](src/cdk/sqs-message-consumer/lib/slack-notifier/README.md) for details.

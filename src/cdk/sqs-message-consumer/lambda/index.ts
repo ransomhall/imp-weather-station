@@ -18,7 +18,8 @@ function saveItemToS3(body: any, key: string): Promise<any> {
     const params = {
       Bucket: process.env.BUCKET_NAME,
       Key: key,
-      Body: parsedJson
+      Body: parsedJson,
+      ContentType: 'application/json',
     };
 
     s3.putObject(params, function (err: any, data: any) {
